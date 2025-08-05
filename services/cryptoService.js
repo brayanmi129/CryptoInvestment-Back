@@ -1,8 +1,7 @@
 // services/cryptoService.js
-import axios from "axios";
-import { getConnection } from "../config/db.js";
-
-export async function fetchCryptoListFromDB() {
+const axios = require("axios");
+const { getConnection } = require("../config/db.js");
+async function fetchCryptoListFromDB() {
   const pool = await getConnection();
 
   const result = await pool.request().query(`
@@ -19,7 +18,7 @@ export async function fetchCryptoListFromDB() {
   return result.recordset;
 }
 
-export async function fetchHistoryFromDB(id) {
+async function fetchHistoryFromDB(id) {
   const pool = await getConnection();
 
   const result = await pool.request().input("cryptoId", id).query(`
@@ -32,7 +31,7 @@ export async function fetchHistoryFromDB(id) {
   return result.recordset;
 }
 
-export async function fetchCryptoByIdFromAPI(id) {
+async function fetchCryptoByIdFromAPI(id) {
   const response = await axios.get(
     `https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?id=${id}`,
     {
@@ -68,7 +67,7 @@ export async function fetchCryptoByIdFromAPI(id) {
   };
 }
 
-export async function actualizarCriptosEnDB() {
+async function actualizarCriptosEnDB() {
   try {
     const response = await axios.get(
       "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest",
@@ -101,3 +100,10 @@ export async function actualizarCriptosEnDB() {
     console.error("Error al actualizar criptomonedas:", error.message);
   }
 }
+
+module.exports = {
+  fetchCryptoListFromDB,
+  fetchHistoryFromDB,
+  fetchCryptoByIdFromAPI,
+  actualizarCriptosEnDB,
+};

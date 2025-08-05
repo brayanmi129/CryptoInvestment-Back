@@ -1,12 +1,12 @@
-import express from "express";
-import dotenv from "dotenv";
-import cors from "cors";
-import cron from "node-cron";
-import { actualizarCriptosEnDB } from "./services/cryptoService.js";
+const express = require("express");
+const dotenv = require("dotenv");
+const cors = require("cors");
+const cron = require("node-cron");
+const { actualizarCriptosEnDB } = require("./services/cryptoService.js");
 const app = express();
 dotenv.config();
 
-import routes from "./routers/routes.js";
+const routes = require("./routers/routes.js");
 
 const port = process.env.PORT || 3000;
 

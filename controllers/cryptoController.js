@@ -1,11 +1,11 @@
 // controllers/cryptoController.js
-import {
+const {
   fetchCryptoListFromDB,
   fetchCryptoByIdFromAPI,
   fetchHistoryFromDB,
-} from "../services/cryptoService.js";
+} = require("../services/cryptoService.js");
 
-export async function getCryptoData(req, res) {
+async function getCryptoData(req, res) {
   try {
     const data = await fetchCryptoListFromDB();
     res.json(data);
@@ -15,7 +15,7 @@ export async function getCryptoData(req, res) {
   }
 }
 
-export async function getDataById(req, res) {
+async function getDataById(req, res) {
   const id = req.query.id;
   try {
     const criptoData = await fetchCryptoByIdFromAPI(id);
@@ -26,7 +26,7 @@ export async function getDataById(req, res) {
   }
 }
 
-export async function getCryptoHistory(req, res) {
+async function getCryptoHistory(req, res) {
   const id = req.query.id;
   try {
     const historyData = await fetchHistoryFromDB(id);
@@ -38,7 +38,7 @@ export async function getCryptoHistory(req, res) {
 }
 
 // Al final de cryptoController.js
-export default {
+module.exports = {
   getCryptoData,
   getDataById,
   getCryptoHistory,
