@@ -18,7 +18,8 @@ cron.schedule("0 0 * * *", () => {
 
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: ["http://localhost:5173", "https://cryptoinvestment.azurewebsites.net"],
+
     credentials: true,
   })
 );
