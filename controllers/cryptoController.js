@@ -36,3 +36,10 @@ export async function getCryptoHistory(req, res) {
     res.status(400).json({ error: `Error al obtener historial para el ID ${id}` });
   }
 }
+
+// Al final de cryptoController.js
+export default {
+  getCryptoData,
+  getDataById,
+  getCryptoHistory,
+};
