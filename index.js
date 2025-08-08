@@ -10,11 +10,10 @@ const routes = require("./routers/routes.js");
 
 const port = process.env.PORT || 3000;
 
-// Ejecutar cada 24 horas
-cron.schedule("0 0 * * *", () => {
-  console.log("Ejecutando actualización diaria de criptomonedas...");
+setInterval(() => {
+  console.log("Ejecutando tarea cada 4 horas...");
   actualizarCriptosEnDB();
-});
+}, 12 * 60 * 60 * 1000); // 4 horas
 
 app.use(
   cors({
