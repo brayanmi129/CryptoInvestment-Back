@@ -3,6 +3,7 @@ const {
   fetchCryptoListFromDB,
   fetchCryptoByIdFromAPI,
   fetchHistoryFromDB,
+  actualizarCriptosEnDB,
 } = require("../services/cryptoService.js");
 
 async function getCryptoData(req, res) {
@@ -37,9 +38,22 @@ async function getCryptoHistory(req, res) {
   }
 }
 
+async function updateCryptos(req, res) {
+  const { random } = req.query;
+  console.log("Actualizando criptomonedas con random:", random);
+  try {
+    await actualizarCriptosEnDB(random);
+    res.json({ message: "Criptomonedas actualizadas correctamente." });
+  } catch (error) {
+    console.error("Error al actualizar criptomonedas:", error);
+    res.status(500).json({ error: "Error al actualizar criptomonedas" });
+  }
+}
+
 // Al final de cryptoController.js
 module.exports = {
   getCryptoData,
   getDataById,
   getCryptoHistory,
+  updateCryptos,
 };

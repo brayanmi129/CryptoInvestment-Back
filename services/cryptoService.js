@@ -67,8 +67,11 @@ async function fetchCryptoByIdFromAPI(id) {
   };
 }
 
-async function actualizarCriptosEnDB() {
+async function actualizarCriptosEnDB(random = null) {
+  console.log("IDs random recibidos:", random);
+
   try {
+    // 1️⃣ Obtener todas las monedas desde CoinMarketCap
     const response = await axios.get(
       "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest",
       {
@@ -78,24 +81,45 @@ async function actualizarCriptosEnDB() {
       }
     );
 
-    const data = response.data.data;
+    const data = response.data.data; // lista completa
     const pool = await getConnection();
 
-    for (const cripto of data) {
-      const { id, quote } = cripto;
-      console.log(id);
-      const price = quote.USD.price;
-      const percent_change_24h = quote.USD.percent_change_24h;
-      const fecha = new Date().toISOString(); // Fecha actual en UTC ISO
+    // 2️⃣ Filtrar si recibimos random
+    let monedasAProcesar = data;
+    if (random) {
+      // Si viene como string único, lo convertimos a array
+      const randomIds = Array.isArray(random) ? random.map((id) => Number(id)) : [Number(random)];
 
-      // Inserta en la tabla de historial
-      await pool.request().query(`
-        INSERT INTO historial_precio (crypto_id, price, date, percent_change_24h)
-        VALUES (${id}, ${price}, '${fecha}', ${percent_change_24h})
-      `);
+      monedasAProcesar = data.filter((cripto) => randomIds.includes(cripto.id));
     }
 
-    console.log("Criptomonedas y su historial actualizados correctamente.");
+    const hoy = new Date().toISOString().split("T")[0];
+
+    // 3️⃣ Procesar solo las monedas seleccionadas
+    for (const cripto of monedasAProcesar) {
+      const { id, quote } = cripto;
+      const price = quote.USD.price;
+      const percent_change_24h = quote.USD.percent_change_24h;
+
+      const existe = await pool.request().query(`
+        SELECT COUNT(*) AS total
+        FROM historial_precio
+        WHERE crypto_id = ${id}
+          AND CONVERT(date, date) = '${hoy}'
+      `);
+
+      if (existe.recordset[0].total === 0) {
+        await pool.request().query(`
+          INSERT INTO historial_precio (crypto_id, price, date, percent_change_24h)
+          VALUES (${id}, ${price}, GETDATE(), ${percent_change_24h})
+        `);
+        console.log(`Insertado: crypto_id ${id}`);
+      } else {
+        console.log(`Ya existe registro para hoy: crypto_id ${id}`);
+      }
+    }
+
+    console.log("Actualización completada.");
   } catch (error) {
     console.error("Error al actualizar criptomonedas:", error.message);
   }

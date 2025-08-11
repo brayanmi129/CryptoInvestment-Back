@@ -10,14 +10,13 @@ const routes = require("./routers/routes.js");
 
 const port = process.env.PORT || 3000;
 
-setInterval(() => {
-  console.log("Ejecutando tarea cada 4 horas...");
-  actualizarCriptosEnDB();
-}, 12 * 60 * 60 * 1000); // 4 horas
-
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://cryptoinvestment.azurewebsites.net"],
+    origin: [
+      "http://localhost:5173",
+      "https://cryptoinvestment.azurewebsites.net",
+      "http://localhost:3000",
+    ],
 
     credentials: true,
   })
